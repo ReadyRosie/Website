@@ -1,3 +1,6 @@
 [submodule "wp"]
 	path = wp
 	url = git://github.com/WordPress/WordPress.git
+[submodule "content/plugins/readyrosie-scheduler"]
+	path = content/plugins/readyrosie-scheduler
+	url = https://github.com/ReadyRosie/ReadyRosie-Scheduler.git
