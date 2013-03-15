@@ -3,13 +3,15 @@ Contributors: toppa
 Donate link: http://www.toppa.com/post-to-post-links-wordpress-plugin
 Tags: post, posts, admin, categories, category, editor, links, pages, page, permalink, shortcode, tags, tag
 Requires at least: 3.0
-Tested up to: 3.5
-Stable tag: 1.0.1
+Tested up to: 3.5.1
+Stable tag: 1.1
 License: GPLv2 or later
 
 Using a modal dialog window in the post editor, easily link to another post, page, tag, or category in your WordPress site.
 
 == Description ==
+
+*New in version 1.1:* For posts not yet published (pending, future, or draft) Post-to-Post Links II won't try to link to them. Instead it shows the link text along with a note saying the post is not published yet (with both inside css classes if you want to style the appearance).
 
 [youtube http://www.youtube.com/watch?v=KTwM5P6TohI]
 
@@ -20,6 +22,8 @@ It generates a shortcode instead of an HTML link. This means your links won't br
 You can also specify a named anchor for the link, and enter any additional attributes you need (such as an "id" or "name" for use with javascript or css).
 
 It includes a button for the visual editor to launch the dialog form for looking up posts. If you prefer the HTML editor, you can install my [Extensible HTML Editor Buttons](http://wordpress.org/extend/plugins/extensible-html-editor-buttons/) plugin, and Post-to-Post Links II will use it to register a button in the HTML editor button bar.
+
+It is multi-site compatible.
 
 **Examples**
 
@@ -61,9 +65,15 @@ Please go to [the Post-to-Post Links II page](http://www.toppa.com/post-to-post-
 
 == Changelog ==
 
+= 1.1 = For posts not yet published (pending, future, or draft) don't link to them. Instead show the link text along with a note saying the post is not published yet (with both inside a css class for custom styling)
+
+= 1.0.3 = Bug fix: infer admin-ajax.php url from current url (the post edit page)
+
+= 1.0.2 = Bug fix: removed remaining calls to Toppa Libraries plugin
+
 = 1.0.1 =
 
-* bug fix: provide relative path for ajax request
+* bug fix: provide relative URL for ajax request
 * bug fix: on activation, use is_plugin_active() to check whether we should register the p2p button with Extensible HTML Editor Buttons (the method check was throwing an error in some environments)
 
 = 1.0 =
@@ -87,5 +97,3 @@ Please go to [the Post-to-Post Links II page](http://www.toppa.com/post-to-post-
 * added apply_filters() with tag 'p2p_error_msg', so that the message can be filtered as needed before it is sent to page
 
 = 0.1 = First version
-
-

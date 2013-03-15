@@ -282,7 +282,7 @@ function act_admin_activity(){
     <?php
       $act_start = ($act_page - 1)*$act_list_limit;
       $act_recent_sql  = "(SELECT u.display_name as display_name, u.id as id, act_type, act_date, act_params, a.id as act_id FROM ".$wpdb->prefix."activity AS a, ".$wpdb->users." AS u WHERE a.user_id = u.id ".$sqlfilter." ORDER BY ".$sqlorderby;
-      $logins = $wpdb->get_results($wpdb->prepare($act_recent_sql));
+      $logins = $wpdb->get_results($act_recent_sql);
       $act_count = count($logins);
       //echo 'act_recent_sql : '.$act_recent_sql.' - act_count : '.$act_count.'<br />';
     ?>
@@ -339,7 +339,7 @@ function act_admin_activity(){
               <th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox" /></th>
               <th></th>
               <th scope="col" class="manage-column"><?php _e("Date", 'wp-activity'); ?></th>
-              <th scope="col" class="manage-column"><?php _e("User"); ?></th>
+              <th scope="col" class="manage-column"><?php _e("User", 'wp-activity'); ?></th>
               <th scope="col" class="manage-column"><?php _e("Event Type", 'wp-activity'); ?></th>
               <th scope="col" class="manage-column"><?php _e("Applies to", 'wp-activity'); ?></th>
             </tr>
@@ -432,6 +432,7 @@ function act_admin_settings(){
     $options_act['act_blacklist']= $_POST['act_blacklist'];
     $options_act['act_auto_bl_n'] = $_POST['act_auto_bl_n'];
     $options_act['act_auto_bl'] = $_POST['act_auto_bl'];
+    $options_act['act_refresh'] = $_POST['act_refresh'];
     $options_act['act_version']=$act_plugin_version;
     if (update_option('act_settings', $options_act)){
       echo '<div id="message" class="updated fade"><p><strong>'.__('Options saved.').'</strong></p></div>';
@@ -517,6 +518,21 @@ function act_admin_settings(){
             <tr>
               <th><?php _e('Highlight new activity since last user login : ', 'wp-activity') ?></th>
               <td><input type="checkbox" <?php if($act_old){echo 'checked="checked"';} ?> name="act_old" /></td>
+            </tr>
+            <tr>
+              <th><?php _e('Use auto-refreshing : ', 'wp-activity') ?></th>
+              <td>
+                <input type="checkbox" <?php if($act_refresh){echo 'checked="checked"';} ?> name="act_refresh" />
+                <select name="act_r_interval">
+                  <option <?php if($act_r_interval == '60') {echo"selected='selected' ";} ?>value ="60">1 <?php _e('minute', wp_activity) ?></option>
+                  <option <?php if($act_r_interval == '120') {echo"selected='selected' ";} ?>value ="120">2 <?php _e('minutes', wp_activity) ?></option>
+                  <option <?php if($act_r_interval == '300') {echo"selected='selected' ";} ?>value ="300">5 <?php _e('minutes', wp_activity) ?></option>
+                  <option <?php if($act_r_interval == '600') {echo"selected='selected' ";} ?>value ="600">10 <?php _e('minutes', wp_activity) ?></option>
+                  <option <?php if($act_r_interval == '900') {echo"selected='selected' ";} ?>value ="900">15 <?php _e('minutes', wp_activity) ?></option>
+                  <option <?php if($act_r_interval == '1800') {echo"selected='selected' ";} ?>value ="1800">30 <?php _e('minutes', wp_activity) ?></option>
+                </select>
+                <br /><span class="act_info"><?php _e('Activity displayed on frontend can be auto-refreshed by AJAX. You can specify the delay between 2 refreshes.','wp-activity') ?></span>
+              </td>
             </tr>
             <tr>
               <th><?php _e('Display a link to the activity archive page : ', 'wp-activity') ?></th>
@@ -712,12 +728,15 @@ function act_admin_stats(){
   switch ($options_act['act_date_format']){
     case "dd/mm/yyyy":
       $act_date_format_js = "dd/mm/yy";
+      $act_df_xaxis = "%0d %b";
       break;
     case "mm/dd/yyyy":
       $act_date_format_js = "mm/dd/yy";
+      $act_df_xaxis = "%b %0d";
       break;
     default:
       $act_date_format_js = "yy/mm/dd";
+      $act_df_xaxis = "%b %0d";
   }
   $sql  = "SELECT * FROM ".$wpdb->prefix."activity WHERE act_date BETWEEN '".$act_date_start."' AND '".$act_date_end." 23:59:59' ORDER BY act_type ASC, act_date ASC"; //We need to set h:m:s as they are by default 00:00:00
   if ( $act_events = $wpdb->get_results( $sql)){
@@ -813,7 +832,7 @@ function act_admin_stats(){
       </form>
       <br class="clear" />
     </div>
-    <div id="act_wrap">
+    <div id="act_admin_wrap">
       <div id="dashboard-widgets" class="metabox-holder">
         <div id="dashboard_right_now" class="postbox">
           <h3><?php _e('Activity Stats', 'wp-activity') ?></h3>
@@ -862,7 +881,7 @@ function act_admin_stats(){
                     {
                         data: d1,
                         label: "<?php echo $act_tab_types[$act_filter] ?>",
-                        bars: { show: true, barWidth : 24*60*60*1000 },
+                        bars: { show: true, barWidth : 24*60*60*1000, align: 'center' },
                         color: "#a3bcd3"
                     }
                   ],
@@ -870,9 +889,11 @@ function act_admin_stats(){
                         xaxis: {
                             mode: "time",
                             minTickSize: [1, "day"],
+                            timeformat: "<?php echo $act_df_xaxis; ?>",
                             tickLength: 0,
                             min: xmin,
-                            max: xmax
+                            max: xmax,
+                            monthNames: <?php echo '["'.__('Jan_January_abbreviation').'","'.__('Feb_February_abbreviation').'","'.__('Mar_March_abbreviation').'","'.__('Apr_April_abbreviation').'","'.__('May_May_abbreviation').'","'.__('Jun_June_abbreviation').'","'.__('Jul_July_abbreviation').'","'.__('Aug_August_abbreviation').'","'.__('Sep_September_abbreviation').'","'.__('Oct_October_abbreviation').'","'.__('Nov_November_abbreviation').'","'.__('Dec_December_abbreviation').'"]'; ?>
                         },
                         yaxis: { 
                             tickDecimals: 0,
@@ -913,7 +934,7 @@ function act_admin_stats(){
                                       y = item.datapoint[1].toFixed(2);
                                   var actDate = new Date();
                                   actDate.setTime(x);
-                                  showTooltip(item.pageX, item.pageY, actDate.toDateString() + "<br />" + item.series.label + " : " + parseFloat(y));
+                                  showTooltip(item.pageX, item.pageY, actDate.toLocaleDateString() + "<br />" + item.series.label + " : " + parseFloat(y));
                               }
                           }
                           else {

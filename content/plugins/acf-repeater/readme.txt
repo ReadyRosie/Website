@@ -1,10 +1,13 @@
 === Advanced Custom Fields: Repeater Field ===
-Contributors: Elliot Condon
-Requires at least: 3.0.0
-Tested up to: 3.5.1
+Contributors: elliotcondon
 Author: Elliot Condon
-Author URL: http://www.elliotcondon.com
-Version: 0.0.6
+Author URI: http://www.elliotcondon.com
+Plugin URI: http://www.advancedcustomfields.com
+Requires at least: 3.0
+Tested up to: 3.5.1
+Stable tag: trunk
+Homepage: http://www.advancedcustomfields.com/add-ons/repeater-field/
+Version: 0.0.7
 
 
 == Copyright ==
@@ -18,7 +21,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 == Description ==
 
-Break free from static inputs and create multiple rows of loop-able data
+= Break free from static inputs and create multiple rows of loop-able data =
 
 The Repeater field acts as a table of data where you can define the columns (sub fields) and add infinite rows.
 Any type of field can be added as a sub field which gives you the potential to create very flexible templates.
@@ -53,6 +56,10 @@ function my_register_fields()
 
 
 == Changelog ==
+
+= 0.0.7 =
+* [IMPORTANT] This update requires the latest ACF v4 files available on GIT - https://github.com/elliotcondon/acf4
+* [Fixed] Fixed bug where field would appear empty after saving the page. This was caused by a cache conflict which has now been avoided by using the format_value filter to load sub field values instead of load_value
 
 = 0.0.6 =
 * [Updated] Update save method to use uniqid for field keys, not pretty field keys

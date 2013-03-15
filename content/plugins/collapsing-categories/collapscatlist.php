@@ -1,6 +1,6 @@
 <?php
 /*
-collapsing categories version: 2.0.2
+collapsing categories version: 2.0.3
 copyright 2007-2010 robert felty
 
 this file is part of collapsing categories
@@ -165,7 +165,7 @@ function getSubPosts($posts, $cat2, $showPosts, $theID) {
             $linktext = "$linktext $theDate";
           }
         }
-        $posttext2.= "<li class='collapsing categories item " .  $self . 
+        $posttext2.= "<li class='collapsing categories item" .  $self . 
             "'><a " .  "href='".get_permalink($post2).
             "' title='$title_text'>$linktext</a></li>\n";
       }
@@ -208,7 +208,7 @@ function get_sub_cat($cat, $categories, $parents, $posts,
         $self="";
       }
       if (in_array($cat2->slug, $autoExpand)) {
-        $parent=" parent " . $cat2->slug;
+        $parent=" parent";
       } else {
         $parent="";
       }
@@ -222,8 +222,7 @@ function get_sub_cat($cat, $categories, $parents, $posts,
         if (((in_array($cat2->name, $autoExpand) ||
             in_array($cat2->slug, $autoExpand)) && $expandCatPost) ||
             ($useCookies && $_COOKIE[$theID]==1)) {
-           //the below line makes subcategories not exapnd automatically 	
-          //$expanded='block';
+          $expanded='block';
         }
         if (!in_array($cat2->term_id, $parents)) {
 					// check to see if there are more subcategories under this one
@@ -242,7 +241,7 @@ function get_sub_cat($cat, $categories, $parents, $posts,
               $show='expand';
               $symbol=$expandSym;
             }
-            $subCatLinks.=( "<li class='collapsing categories expandable " .
+            $subCatLinks.=( "<li class='collapsing categories expandable" . 
                 $self . $parent . "'>".
                 "<span class='collapsing categories $show'>".
                 "<span class='sym'>$symbol</span>" );
@@ -290,7 +289,7 @@ function get_sub_cat($cat, $categories, $parents, $posts,
             $show='expand';
             $symbol=$expandSym;
           }
-          $subCatLinks.=( "<li class='collapsing categories expandable " . 
+          $subCatLinks.=( "<li class='collapsing categories expandable" . 
               $self . $parent . "'>".
               "<span class='collapsing categories $show'>".
               "<span class='sym'>$symbol</span>" );
@@ -372,7 +371,6 @@ function collapscat_catfilter($categories) {
     }
 	}
   for ($i=0; $i<count($categories); $i++) {
-  	if ($categories[$i]->slug=='uncategorized')  unset($categories[$i]);
     if ($inExclude=='exclude' && !empty($inExclusionArray)) {
       if (in_array($categories[$i]->slug, $inExclusionArray) OR
           in_array($categories[$i]->term_id, $inExclusionArray)) {
@@ -459,7 +457,7 @@ function get_collapscat_fromdb($args='') {
 	  $taxonomyQuery= "'$taxonomy'";
   }
  /* we also need to specify post types */
-  $post_type_query = "AND (post_type='$post_type' OR post_type='video')";
+ $post_type_query = "AND post_type='$post_type'";
 	if ($olderThan > 0) {
 		$now = date('U');
 		$olderThanQuery= "AND  date(post_date) > '" . 
@@ -594,7 +592,7 @@ function list_categories($posts, $categories, $parents, $options) {
       $self="";
     }
     if (in_array($cat->slug, $autoExpand)) {
-      $parent=" parent" ;
+      $parent=" parent";
     } else {
       $parent="";
     }
@@ -614,8 +612,7 @@ function list_categories($posts, $categories, $parents, $options) {
       if (((in_array($cat->name, $autoExpand) ||
           in_array($cat->slug, $autoExpand)) && $expandCatPost) ||
           ($useCookies && $_COOKIE[$theID]==1)) {
-          	//the below line expands the major categories
-        //$expanded='block';
+        $expanded='block';
       }
       if ($showPosts || $subCatPostCount>0 || $showEmptyCat) {
         if ($expanded=='block') {
@@ -625,13 +622,8 @@ function list_categories($posts, $categories, $parents, $options) {
           $show='expand';
           $symbol=$expandSym;
         }
-        $span= "      <li class='collapsing categories expandable " . $cat->slug .  $self .
-            $parent . "'>";
-        if (function_exists('get_terms_meta')) {
-		    $metaValue = get_terms_meta($cat->term_id, 'icon');
-			$span=$span . '<img style="vertical-align: middle;" src="wp-content/uploads/' . $metaValue[0] . '" /> '; 
-		}
-        $span=$span .
+        $span= "      <li class='collapsing categories expandable" .  $self .
+            $parent . "'>".
             "<span class='collapsing categories $show'>".
             "<span class='sym'>$symbol</span>";
       } else {

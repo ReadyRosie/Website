@@ -56,7 +56,7 @@ class acf_remote_update
         $request = wp_remote_post( $this->settings['remote'] );
         if( !is_wp_error($request) || wp_remote_retrieve_response_code($request) === 200)
         {
-            $info = unserialize($request['body']);
+            $info = @unserialize($request['body']);
             $info->slug = $this->settings['slug'];
         }
         
@@ -128,7 +128,7 @@ class acf_remote_update
     {
     
     	// validate
-    	if( $arg->slug != $this->settings['slug'] )
+    	if( !isset($arg->slug) || $arg->slug != $this->settings['slug'] )
     	{
 	    	return $false;
     	}

@@ -29,7 +29,6 @@ class collapsCatWidget extends WP_Widget {
     }
     echo "</ul>\n";
     echo $after_widget;
-	echo '<div id="listposts" style="display: none"></div>';
   }
  
   function update($new_instance, $old_instance) {

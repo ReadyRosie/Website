@@ -8,6 +8,7 @@ class Post2Post {
     private $title;
     private $linkText;
     private $linkAnchor;
+    private $status = 'publish';
     private $p2pLink;
 
     public function __construct(p2pFunctionsFacade $functionsFacade, p2pDatabaseFacade $dbFacade) {
@@ -116,8 +117,12 @@ class Post2Post {
         }
 
         $this->shortcode = $userShortcode;
-        array_walk($this->shortcode, array('ToppaFunctions', 'trimCallback'));
+        array_walk($this->shortcode, array($this, 'trimCallback'));
         return $this->shortcode;
+    }
+
+    public function trimCallback(&$string, $key = null) {
+        $string = trim($string);
     }
 
     public function setTitleAndLinkUrlFromPostSlug() {
@@ -126,7 +131,7 @@ class Post2Post {
         }
 
         $posts_table = $this->dbFacade->executeDbFunction('posts');
-        $fields = array('ID', 'post_title');
+        $fields = array('ID', 'post_title', 'post_status');
         $where = array('post_name' => $this->shortcode['slug']);
         $post = $this->dbFacade->sqlSelectRow($posts_table, $fields, $where);
 
@@ -141,9 +146,10 @@ class Post2Post {
 
         $this->linkUrl = $this->functionsFacade->getPermalink($post['ID']);
         $this->title = $post['post_title'];
+        $this->status = $post['post_status'];
     }
 
-    // @deprecated
+    /* @deprecated */
     public function setTitleAndLinkUrlFromPostId() {
         if (!is_numeric($this->shortcode['id'])) {
             throw New Exception(__('You must provide a numeric post ID', 'p2p'));
@@ -242,13 +248,21 @@ class Post2Post {
     }
 
     public function setP2pLink() {
-        $this->p2pLink = "<a href='{$this->linkUrl}{$this->linkAnchor}' title='{$this->title}'";
+        if ($this->status == 'publish') {
+            $this->p2pLink = "<a href='{$this->linkUrl}{$this->linkAnchor}' title='{$this->title}'";
 
-        if (is_string($this->shortcode['attributes'])) {
-            $this->p2pLink .= ' ' . $this->shortcode['attributes'];
+            if (is_string($this->shortcode['attributes'])) {
+                $this->p2pLink .= ' ' . $this->shortcode['attributes'];
+            }
+
+            $this->p2pLink .= ">{$this->linkText}</a>";
         }
 
-        $this->p2pLink .= ">{$this->linkText}</a>";
+        else {
+            $note = __('[the linked post is not published yet]', 'p2p');
+            $this->p2pLink = "<i class='p2p-pending-link'>{$this->linkText}</i> <i class='p2p-pending-note'>$note</i>";
+        }
+
         return $this->p2pLink;
     }
 
@@ -304,10 +318,10 @@ class Post2Post {
     }
 
     public function formatExceptionMessage($e) {
-        return '<p><strong>'
+        return '<i class="p2p-error">'
             . __('Post to Post Links II error', 'p2p')
-            . ':</strong></p><pre>'
+            . ': '
             . $e->getMessage()
-            . '</pre>';
+            . '</i>';
     }
 }

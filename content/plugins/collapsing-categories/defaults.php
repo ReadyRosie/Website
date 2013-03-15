@@ -3,12 +3,12 @@ $defaults=array(
    'title' => __('Categories', 'collapsing-categories'),
    'showPostCount' => true,
    'inExclude' => 'exclude',
-   'inExcludeCats' => '1',
+   'inExcludeCats' => '',
    'showPosts' => true, 
    'showPages' => false,
    'linkToCat' => true,
    'olderThan' => 0,
-   'excludeAll' => '1',
+   'excludeAll' => '0',
    'catSortOrder' => 'ASC',
    'catSort' => 'catName',
    'postSortOrder' => 'ASC',
@@ -25,8 +25,8 @@ $defaults=array(
    'showPostDate' => false,
    'useCookies' => true,
    'postsBeforeCats' => false,
-   'expandCatPost' => false,
+   'expandCatPost' => true,
    'showEmptyCat' => false,
-   'showTopLevel' => false
+   'showTopLevel' => true
 );
 ?>

@@ -3,8 +3,8 @@ Contributors: Dric1107
 Donate link: http://www.driczone.net/blog
 Tags: stream, activity, community, multi-users, log, event, monitor, stats, blacklist, tracking, access, security, login
 Requires at least: 3.1
-Tested up to: 3.3.2
-Stable tag: 1.9.2
+Tested up to: 3.5
+Stable tag: 2.0
 
 Monitor and display registered users activity (logins, posts, comments, etc.). You can also track and prevent hackering attemps, with IP blacklisting.
 
@@ -53,6 +53,7 @@ Translations :
 - Spanish (Thx to Cscean - translated up to v1.3)
 - Romanian (Thx to Web Geeks - translated up to v1.7)
 - Dutch (Thx to Tom - translated up to v1.8.1)
+- Russian (Thx to Semyon Nikiforov - partially translated)
 
 (If you translated my plugin, please send the translated .po file at cedric@driczone.net )
 
@@ -64,7 +65,6 @@ Resources used :
 
 - Fugue Icons by Yusuke Kamiyamane (http://p.yusukekamiyamane.com)
 - Flot jQuery library (http://code.google.com/p/flot/)
-
 
 == Installation ==
 
@@ -170,7 +170,12 @@ You have to modify the `$act_list_limit` var line 31 of wp-activity.php.
 
 You have to modify the `$no_admin_mess` var line 33 of wp-activity.php and set it to **true**.
 
+= I use custom posts, and the activity related to them is not logged ! =
+
+Unless custom posts are not processed by Wordpress the same way as regular posts, I can't track custom posts changes (or I don't know how).
+
 = I have a poor hosting, is your plugin a big fat resources consumer ? =
+
 I also have a poor hosting, so I try to keep my plugin as light as I can ; the admin scripts and css files are only loaded when needed.
 Best-Performance tips :
 
@@ -184,6 +189,10 @@ Best-Performance tips :
 Hum. I'm testing it on two Wordpress installations (local WAMP and online test site), and I send my beta versions to my favorite tester. But even with that, some bugs stay present. That's why there is often updates that just fix the previous ones... Sorry for that.
 If you want to be sure it's debugged, you can wait a few days for a x.x.1 version release.
 
+== To-do ==
+
+* Custom role to access wp-activity admin panel.
+* Display activity related to post in admin post edit.
 
 == Screenshots ==
 
@@ -192,7 +201,21 @@ If you want to be sure it's debugged, you can wait a few days for a x.x.1 versio
 3. admin screen - one of the settings tabs
 4. admin screen - stats
 
+
 == ChangeLog ==
+
+= 2.0 =
+* Added auto-refresh for activity displayed on frontend (with AJAX).
+* Added compatibility with Wordpress 3.5 (no more warning in admin panel)
+* Added partial Russian translation (Thx to Semyon Nikiforov)
+* Added Swedish translation (Thx to Per Söderman)
+* Various Tweaks
+
+= 1.9.3 =
+* Stats graph now displays localized dates (Thx to Per Söderman).
+* Fixed bug with stats display.
+* Fixed bug with translation string.
+* Updated Dutch translation by [Venntom](http://wordpress.org/support/profile/venntom).
 
 = 1.9.2 =
 * Fixed bug with event display.

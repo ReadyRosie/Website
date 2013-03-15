@@ -30,7 +30,7 @@ class acf_field_repeater extends acf_field
 		$this->settings = array(
 			'path' => $this->get_path(),
 			'dir' => $this->get_dir(),
-			'version' => '0.0.6'
+			'version' => '0.0.7'
 		);
 		
 	}
@@ -232,7 +232,7 @@ class acf_field_repeater extends acf_field
 		
 		
 		// value may be false
-		if( !$field['value'] )
+		if( !is_array($field['value']) )
 		{
 			$field['value'] = array();
 		}
@@ -792,9 +792,7 @@ class acf_field_repeater extends acf_field
 		*/
 		
 		
-		$old_total = apply_filters('acf/load_value', 0, $post_id, $field);
-		$old_total = count($old_total);
-		
+		$old_total = (int) apply_filters('acf/load_value', 0, $post_id, $field);
 		
 		if( $old_total > $total )
 		{
@@ -802,7 +800,6 @@ class acf_field_repeater extends acf_field
 			{
 				foreach( $field['sub_fields'] as $sub_field )
 				{
-				
 					do_action('acf/delete_value', $post_id, $field['name'] . '_' . $j . '_' . $sub_field['name'] );
 				}
 			}
@@ -873,22 +870,22 @@ class acf_field_repeater extends acf_field
 	
 	
 	/*
-	*  load_value()
+	*  format_value()
 	*
-	*  This filter is appied to the $value after it is loaded from the db
+	*  This filter is appied to the $value after it is loaded from the db and before it is passed to the create_field action
 	*
 	*  @type	filter
 	*  @since	3.6
 	*  @date	23/01/13
 	*
-	*  @param	$value - the value found in the database
-	*  @param	$post_id - the $post_id from which the value was loaded from
-	*  @param	$field - the field array holding all the field options
+	*  @param	$value	- the value which was loaded from the database
+	*  @param	$post_id - the $post_id from which the value was loaded
+	*  @param	$field	- the field array holding all the field options
 	*
-	*  @return	$value - the value to be saved in te database
+	*  @return	$value	- the modified value
 	*/
 	
-	function load_value( $value, $post_id, $field )
+	function format_value( $value, $post_id, $field )
 	{
 		// vars
 		$values = array();
@@ -903,63 +900,21 @@ class acf_field_repeater extends acf_field
 				foreach( $field['sub_fields'] as $sub_field )
 				{
 					// update full name
+					$key = $sub_field['key'];
 					$sub_field['name'] = $field['name'] . '_' . $i . '_' . $sub_field['name'];
 					
-					$values[ $i ][ $sub_field['key'] ] = apply_filters('acf/load_value', false, $post_id, $sub_field);
+					$v = apply_filters('acf/load_value', false, $post_id, $sub_field);
+					$v = apply_filters('acf/format_value', $v, $post_id, $sub_field);
+					
+					$values[ $i ][ $key ] = $v;
+					
 				}
 			}
-			
 		}
-		
-		return $values;
-	}
-	
-	
-	
-	/*
-	*  format_value()
-	*
-	*  This filter is appied to the $value after it is loaded from the db and before it is passed to the create_field action
-	*
-	*  @type	filter
-	*  @since	3.6
-	*  @date	23/01/13
-	*
-	*  @param	$value	- the value which was loaded from the database
-	*  @param	$field	- the field array holding all the field options
-	*
-	*  @return	$value	- the modified value
-	*/
-	
-	function format_value( $value, $field )
-	{
-		// vars
-		$sub_fields = array();
-		
-		
-		// create list of sub fields
-		if( is_array($field['sub_fields']) ){ foreach( $field['sub_fields'] as $f ){
-				
-			$sub_fields[ $f['key'] ] = $f;
-				
-		}}
-			
-		
-		// run filter on all sub values
-		if( is_array($value) ){ foreach( $value as $i => $row ){
-		
-			if( is_array($row) ){ foreach( $row as $k => $v )
-			{
-				if( !isset($sub_fields[ $k ]) ){ continue; }
-				
-				$value[ $i ][ $k ] = apply_filters('acf/format_value', $v, $sub_fields[ $k ]);
-			}}
-			
-		}}
 		
 		
 		// return
-		return $value;
+		return $values;
 	}
 	
 	
@@ -968,55 +923,47 @@ class acf_field_repeater extends acf_field
 	*
 	*  This filter is appied to the $value after it is loaded from the db and before it is passed back to the api functions such as the_field
 	*
-	*  @param	$value	- the value which was loaded from the database
-	*  @param	$field	- the field array holding all the field options
-	*
-	*  @return	$value	- the modified value
-	*
 	*  @type	filter
 	*  @since	3.6
 	*  @date	23/01/13
+	*
+	*  @param	$value	- the value which was loaded from the database
+	*  @param	$post_id - the $post_id from which the value was loaded
+	*  @param	$field	- the field array holding all the field options
+	*
+	*  @return	$value	- the modified value
 	*/
 	
-	function format_value_for_api( $value, $field )
+	function format_value_for_api( $value, $post_id, $field )
 	{
 		// vars
-		$sub_fields = array();
+		$values = array();
 		
 		
-		// create list of sub fields
-		if( is_array($field['sub_fields']) ){ foreach( $field['sub_fields'] as $f ){
-				
-			$sub_fields[ $f['key'] ] = $f;
-				
-		}}
-			
-		
-		// run filter on all sub values
-		if( is_array($value) ){ foreach( $value as $i => $row ){
-		
-			if( is_array($row) ){ foreach( $row as $k => $v )
+		if( $value > 0 )
+		{
+			// loop through rows
+			for($i = 0; $i < $value; $i++)
 			{
-				if( !isset($sub_fields[ $k ]) ){ continue; }
-				
-				$sub_field = $sub_fields[ $k ];
-				
-				// format value
-				$new_v = apply_filters('acf/format_value_for_api', $v, $sub_field);
-				
-				// unset old key (field_key)
-				unset( $value[ $i ][ $k ] );
-				
-				// set new key (field_name)
-				$value[ $i ][ $sub_field['name'] ] = $new_v;
-
-			}}
-			
-		}}
+				// loop through sub fields
+				foreach( $field['sub_fields'] as $sub_field )
+				{
+					// update full name
+					$key = $sub_field['name'];
+					$sub_field['name'] = $field['name'] . '_' . $i . '_' . $sub_field['name'];
+					
+					$v = apply_filters('acf/load_value', false, $post_id, $sub_field);
+					$v = apply_filters('acf/format_value_for_api', $v, $post_id, $sub_field);
+					
+					$values[ $i ][ $key ] = $v;
+					
+				}
+			}
+		}
 		
 		
 		// return
-		return $value;
+		return $values;
 	}
 	
 }

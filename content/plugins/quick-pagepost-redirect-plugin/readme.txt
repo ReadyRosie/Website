@@ -3,19 +3,19 @@ Contributors: Don Fischer
 Donate link: http://www.fischercreativemedia.com/donations/
 Tags: redirect, 301, 302, meta, post, plugin, page, forward, re-direct, nofollow, menu links, posts, pages, admin, 404, custom post types, nav menu, import, export, restore
 Requires at least: 3.1
-Tested up to: 3.4.2
+Tested up to: 3.5.1
 Stable tag: trunk
 
 Redirect Pages/Posts to another page/post or external URL. Has edit box as well as global options. Specify the redirect Location and type. For PHP5+
 
 == Description ==
-Version 5.0.2.
+Version 5.0.3.
 This plugin adds adds an option box to the edit section where you can specify the redirect location and type of redirect that you want, temporary, permanent, or meta. See below for additional features added. 
 
 = Features: = 
 * Works with new WordPress menus
 * Works with new WordPress Custom Post Types (set option on settings page)
-* jQuery integration for more enhanced re-writes (set option on settings page).
+* Disabled in 5.0.3: [jQuery integration for more enhanced re-writes (set option on settings page)].
 * You can set a redirect page or menu link to open in a new window (will not work on permalinks)
 * You can add a *rel="nofollow"* attribute to the page or menu link of the redirect (will not work on permalinks)
 * You can completely re-write the URL for the redirect so it takes the place of the default page URL (rewrite the href link)
@@ -129,6 +129,12 @@ NO it isn't! Check the plugin FAQs/Help page for a more up to date list of Frequ
 5. Summary of redirects plugin page.
 
 == Changelog ==
+= 5.0.3 =
+* Minor bug cleanup update - (no new features added)
+* Bug fixes: Javascript ghost js file call fixed. Actions hooks not applying issue fixed. Querystring redirect issue addressed. Unset index errors addressed. Some Network/MU problems fixed.
+* Modified Import and Export scripts to export a more editable export file. Import can be either old encoded version or new readable PIPE version.
+* Typos and minor layout issues addressed.
+
 = 5.0.2 =
 * Bug fixes and jQuery now set to off until issues are resolved.
 * Set Case Sensetive to on by default - Some people having issues with infinite loops.
